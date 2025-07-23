@@ -7,44 +7,97 @@ This project enables real-time stereo visual SLAM using the GCNv2 keypoint extra
 
 ## 🚀 Features
 
-* ✅ Added **stereo camera support**
-* ✅ Enhanced build instructions and Python environment setup
-* ✅ Support for [TUM](https://vision.in.tum.de/data/datasets/rgbd-dataset) / [EuRoC](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets)
-* ✅ Integrated GCNv2 model accuracy visualizer
-* ✅ Compatible with `evo_ape` evaluation
+* ✅ **Stereo camera support** for EuRoC dataset
+* ✅ Enhanced build and environment setup (C++ & Python)
+* ✅ Compatible with [TUM](https://vision.in.tum.de/data/datasets/rgbd-dataset) / [EuRoC](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets)
+* ✅ Visual keypoint matching inspection tool
+* ✅ `evo_ape` trajectory evaluation ready
 
 ---
 
-## 🛠 Environment & Dependencies
+## 👨‍💻 My Contributions
+
+This project is a major enhancement of the original [GCNv2\_SLAM](https://github.com/jiexiong2016/GCNv2_SLAM), focusing on **stereo SLAM integration** and **EuRoC dataset support**, which were not supported in the original version.
+
+**Key contributions:**
+
+* 🔄 **Extended RGB-D pipeline to stereo camera input**
+
+  * Implemented stereo image stream parsing and calibration handling
+  * Adjusted triangulation and map initialization logic for stereo geometry
+* 📂 **Supported the EuRoC MAV dataset**
+
+  * Developed custom timestamp association pipeline
+  * Validated sequences with `evo_ape` metrics
+* 💡 **CMake and libtorch integration**
+
+  * Set up GCNv2 with libtorch (PyTorch C++ API)
+  * Simplified build pipeline via `build.sh`
+* 📊 **Created visualization scripts**
+
+  * Keypoint accuracy and feature matching overlay
+  * Output for qualitative inspection
+
+This work demonstrates practical integration of learned feature extractors into a real-time stereo SLAM system.
+
+---
+
+## 📚 Technical Summary
+
+This project bridges deep learning and classic SLAM by integrating the **GCNv2 graph-based keypoint extractor** into a **stereo visual SLAM** pipeline.
+
+**Key Technologies:**
+
+* **Stereo SLAM:** 3D point estimation from synchronized stereo pairs
+* **GCNv2:** A learned graph-convolutional keypoint descriptor model
+* **SLAM backend:** Adapted from ORB-SLAM2 (BA, map, keyframes)
+* **Evaluation:** Pose accuracy benchmarking using `evo_ape`
+
+---
+
+## 🧪 Engineering Challenges & Solutions
+
+* ❗ **GCNv2 only supported RGB-D in original repo**
+
+  * ✅ Re-implemented frame pipeline to support stereo camera geometry and epipolar constraints
+
+* ❗ **Libtorch (C++) integration was ABI-sensitive**
+
+  * ✅ Recompiled PyTorch 1.9.1 with CUDA 10.2, ensured C++14 compatibility and ABI consistency
+
+* ❗ **EuRoC dataset requires accurate timestamp sync**
+
+  * ✅ Developed `associate.py` for stereo alignment, interpolated missing timestamps if needed
+
+---
+
+## 📃 Environment & Dependencies
 
 Tested on:
 
-* **OS**: Ubuntu 18.04 LTS
-* **GPU**: NVIDIA GeForce RTX 2060
-* **CUDA**: 10.2
-* **cuDNN**: Compatible with CUDA 10.2
-* **PyTorch**: 1.9.1 (built manually)
-* **CPU**: Intel Xeon E3-1230 V2
+* **Ubuntu 18.04 LTS**
+* **GPU:** NVIDIA RTX 2060
+* **CUDA:** 10.2
+* **cuDNN:** Compatible with CUDA 10.2
+* **PyTorch (C++):** 1.9.1
 
 ### 📦 Required Downloads
 
-* **libtorch (PyTorch C++ 1.9.1)**
-
 ```bash
+# libtorch
 wget https://download.pytorch.org/libtorch/cu102/libtorch-cxx11-abi-shared-with-deps-1.9.1+cu102.zip
 unzip libtorch-cxx11-abi-shared-with-deps-1.9.1+cu102.zip
 ```
 
-* **ORB\_SLAM2**
-  Follow setup guide: [https://github.com/raulmur/ORB\_SLAM2](https://github.com/raulmur/ORB_SLAM2)
+Also clone and build:
+
+* [ORB\_SLAM2](https://github.com/raulmur/ORB_SLAM2)
 
 ---
 
 ## 🔧 Build GCNv2\_SLAM
 
-Make sure you're using the modified `CMakeLists.txt` provided in this repo.
-
-Then build the project:
+Use the provided `CMakeLists.txt`, then run:
 
 ```bash
 ./build.sh
@@ -52,9 +105,9 @@ Then build the project:
 
 ---
 
-## 🥪 Test GCN Feature Extractor
+## 🥪 Test Keypoint Extractor
 
-Create a Python environment:
+Python environment setup:
 
 ```bash
 conda create -n gcnv2_env python=3.8 -y
@@ -63,72 +116,63 @@ conda install pytorch==1.10.2 torchvision==0.11.3 cudatoolkit=10.2 -c pytorch
 pip install opencv-python matplotlib
 ```
 
-Run visualization:
+Run test:
 
 ```bash
 python show_accuracy.py
 ```
 
-### Output
-
-* A folder named `GCN_matching` will be created.
-* This folder contains keypoint matching visualizations.
+This will generate `GCN_matching/` folder with visual keypoint match overlays.
 
 ---
 
-## 🎮 Run GCNv2\_SLAM on Dataset
+## 🎮 Run SLAM
 
-### Model
+### 💡 Model
 
-Use the provided model file:
+Use model file:
 
 ```
 model/gcn2_320x240.pt
 ```
 
-### Create Association File
+### 🔄 Create Association File
 
 ```bash
 python associate.py
 ```
 
-### Run SLAM (TUM)
+### 📹 Run on TUM (RGB-D)
 
 ```bash
 cd ~/GCN2
-
-GCN_PATH=/home/lab605/lab605/GCNv2_SLAM/GCN2/gcn2_320x240.pt ./rgbd_gcn \
-    /home/lab605/lab605/GCNv2_SLAM/Vocabulary/GCNvoc.bin \
-    /home/lab605/lab605/GCNv2_SLAM/GCN2/TUM3.yaml \
-    /home/lab605/lab605/dataset/TUM/rgbd_dataset_freiburg1_xyz \
-    /home/lab605/lab605/dataset/TUM/rgbd_dataset_freiburg1_xyz/association.txt
+GCN_PATH=/home/user/GCNv2_SLAM/GCN2/gcn2_320x240.pt ./rgbd_gcn \
+    /home/user/GCNv2_SLAM/Vocabulary/GCNvoc.bin \
+    /home/user/GCNv2_SLAM/GCN2/TUM3.yaml \
+    /home/user/dataset/TUM/rgbd_dataset_freiburg1_xyz \
+    /home/user/dataset/TUM/rgbd_dataset_freiburg1_xyz/association.txt
 ```
 
-### Run SLAM (EuRoC)
+### 🌍 Run on EuRoC (Stereo)
 
 ```bash
 cd ~/GCN2
-
- GCN_PATH=/home/lab605/lab605/GCNv2_SLAM/GCN2/gcn2_320x240.pt
-    /home/lab605/lab605/GCNv2_SLAM/GCN2/stereo_gcn /home/lab605/lab605/GCNv2_SLAM/Vocabulary/GCNvoc.bin
-    /home/lab605/lab605/ORB_SLAM2/Examples/Stereo/EuRoC.yaml
-    /home/lab605/lab605/dataset/EuRoC/MH_01/mav0/cam0/data
-    /home/lab605/lab605/dataset/EuRoC/MH_01/mav0/cam1/data
-    /home/lab605/lab605/ORB_SLAM2/Examples/Stereo/EuRoC_TimeStamps/MH01.txt
+GCN_PATH=/home/user/GCNv2_SLAM/GCN2/gcn2_320x240.pt \
+    ./stereo_gcn /home/user/GCNv2_SLAM/Vocabulary/GCNvoc.bin \
+    /home/user/ORB_SLAM2/Examples/Stereo/EuRoC.yaml \
+    /home/user/dataset/EuRoC/MH_01/mav0/cam0/data \
+    /home/user/dataset/EuRoC/MH_01/mav0/cam1/data \
+    /home/user/ORB_SLAM2/Examples/Stereo/EuRoC_TimeStamps/MH01.txt
 ```
-
-Make sure to update paths according to your system.
 
 ---
 
 ## 📊 Evaluation with `evo`
 
-Evaluate Absolute Pose Error using [`evo`](https://github.com/MichaelGrupp/evo):
-
 ```bash
 evo_ape tum \
-    /home/lab605/lab605/dataset/TUM/rgbd_dataset_freiburg1_xyz/groundtruth.txt \
-    /home/lab605/lab605/GCNv2_SLAM/GCN2/KeyFrameTrajectory.txt \
+    /home/user/dataset/TUM/rgbd_dataset_freiburg1_xyz/groundtruth.txt \
+    /home/user/GCNv2_SLAM/GCN2/KeyFrameTrajectory.txt \
     --align --plot
 ```
 
@@ -155,42 +199,39 @@ GCNv2_SLAM-Stereo/
 
 ---
 
+## 📊 Benchmark Results
+
+✅ : fully tracked | ❌ : tracking lost
+
+| Dataset / Sequence             | ORB (nlevel=8) | ORB (nlevel=1) | 320x240.pt | 640x480.pt | aug.pt     | tiny.pt    |
+| ------------------------------ | -------------- | -------------- | ---------- | ---------- | ---------- | ---------- |
+| **TUM RGB-D**                  |                |                |            |            |            |            |
+| rgbd\_dataset\_freiburg1\_desk | 0.018781 ✅     | 0.014945 ✅     | 0.036593 ❌ | 0.132776 ✅ | 0.020748 ❌ | 0.222797 ✅ |
+| rgbd\_dataset\_freiburg1\_xyz  | 0.012081 ✅     | 0.009779 ✅     | 0.080495 ✅ | 0.014587 ✅ | 0.088993 ✅ | 0.084459 ✅ |
+| **EuRoC Stereo**               |                |                |            |            |            |            |
+| MH\_01                         | 0.037540 ✅     | 0.040972 ✅     | 0.018083 ❌ | 0.175981 ✅ | 0.014021 ❌ | 0.038764 ❌ |
+| MH\_05                         | 0.047538 ✅     | 0.188428 ✅     | 0.544578 ❌ | 0.892108 ❌ | 0.558102 ❌ | 0.052919 ❌ |
+
 ---
-## 📊 Evaluation
-
-✅ : fully tracked along whole sequence  
-❌ : lost track during the sequence  
-
-| Dataset / Sequence                                        | ORB (nlevel=8) | ORB (nlevel=1) | 320x240.pt | 640x480.pt | aug.pt  | tiny.pt  |
-|------------------------------------------------------------|----------------|----------------|------------|------------|---------|-------|
-| **TUM RGB-D**                                              |                |                |            |            |         |       |
-| rgbd_dataset_freiburg1_desk                                | 0.018781 ✅     | 0.014945 ✅     | 0.036593 ❌ | 0.132776 ✅ | 0.020748 ❌ | 0.222797 ✅ |
-| rgbd_dataset_freiburg1_xyz                                 | 0.012081 ✅     | 0.009779 ✅     | 0.080495 ✅ | 0.014587 ✅ | 0.088993 ✅ | 0.084459 ✅ |
-| rgbd_dataset_freiburg2_pioneer_360                         | 0.065314 ✅     | 0.028517 ❌     | 0.307028 ❌ | 0.585210 ❌ | 0.323715 ❌ | 0.079713 ❌ |
-| rgbd_dataset_freiburg3_nostructure_notexture_near_withloop  | ❌              | ❌              | ❌         | 0.004605 ❌ | ❌      | ❌     |
-| **EuRoC Stereo**                                           |                |                |            |            |         |       |
-| MH_01                                                      | 0.037540 ✅     | 0.040972 ✅     | 0.018083 ❌ | 0.175981 ✅ | 0.014021 ❌ | 0.038764 ❌ |
-| MH_05                                                      | 0.047538 ✅     | 0.188428 ✅     | 0.544578 ❌ | 0.892108 ❌ | 0.558102 ❌ | 0.052919 ❌ |
-
-For detailed ORB-SLAM `nlevel` experiment results, see:  
-👉 [ORB_RMSE Experiment (linB110/orb_slam3_ros)](https://github.com/linB110/orb_slam3_ros/tree/experiment/RMSE_experiment)
----
-
 
 ## 🙏 Acknowledgements
 
-This project is based on:
+This project builds on:
 
 * [ORB\_SLAM2](https://github.com/raulmur/ORB_SLAM2)
 * [GCNv2\_SLAM](https://github.com/jiexiong2016/GCNv2_SLAM)
 
-Stereo support and additional tools were added in this fork.
+Stereo support and evaluation pipelines were added in this fork.
 
 ---
 
-## 📌 Notes
+## 📌 What I Learned
 
-* All dataset and model paths must be valid.
-* It's strongly recommended to use isolated Conda environments.
-* Pull requests are welcome if you wish to contribute!
+* Deep integration of learned vision models in real-time SLAM systems
+* Debugging stereo frame synchronization and calibration
+* Understanding SLAM frontend-backend architecture
+* Quantitative evaluation and reproducible research practices
 
+---
+
+Pull requests are welcome! Feel free to fork and build on this project.
