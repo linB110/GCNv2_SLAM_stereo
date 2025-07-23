@@ -23,16 +23,13 @@ This project is a major enhancement of the original [GCNv2\_SLAM](https://github
 
 * 🔄 **Extended RGB-D pipeline to stereo camera input**
 
-  * Implemented stereo image stream parsing and calibration handling
-  * Adjusted triangulation and map initialization logic for stereo geometry
-* 📂 **Supported the EuRoC MAV dataset**
+  * Implemented stereo image stream parsing and keypoint matching
+  * **Supported the EuRoC MAV dataset**
 
-  * Developed custom timestamp association pipeline
-  * Validated sequences with `evo_ape` metrics
 * 💡 **CMake and libtorch integration**
 
   * Set up GCNv2 with libtorch (PyTorch C++ API)
-  * Simplified build pipeline via `build.sh`
+
 * 📊 **Created visualization scripts**
 
   * Keypoint accuracy and feature matching overlay
@@ -57,17 +54,21 @@ This project bridges deep learning and classic SLAM by integrating the **GCNv2 g
 
 ## 🧪 Engineering Challenges & Solutions
 
-* ❗ **GCNv2 only supported RGB-D in original repo**
-
-  * ✅ Re-implemented frame pipeline to support stereo camera geometry and epipolar constraints
-
 * ❗ **Libtorch (C++) integration was ABI-sensitive**
 
   * ✅ Recompiled PyTorch 1.9.1 with CUDA 10.2, ensured C++14 compatibility and ABI consistency
 
+* ❗ **GCNv2 only supported RGB-D in original repo**
+
+  * ✅ Re-implemented frame pipeline to support stereo camera geometry 
+
 * ❗ **EuRoC dataset requires accurate timestamp sync**
 
   * ✅ Developed `associate.py` for stereo alignment, interpolated missing timestamps if needed
+  * 
+* ❗ **Minor revision in model for modern pytorch usage**
+
+  * ✅ To ensure compatibility with modern PyTorch (≥1.10), I modified parts of the model's traced forward() function that relied on legacy or deprecated behavior
 
 ---
 
