@@ -15,6 +15,14 @@ This project enables real-time stereo visual SLAM using the GCNv2 keypoint extra
 
 ---
 
+---
+
+## 🎥 Demo (GIF Preview)
+
+![GCNv2 SLAM Demo](https://raw.githubusercontent.com/linB110/GCNv2_SLAM_stereo/main/demo/GCNv2_SLAM.gif)
+
+---
+
 ## 👨‍💻 My Contributions
 
 This project is a major enhancement of the original [GCNv2\_SLAM](https://github.com/jiexiong2016/GCNv2_SLAM), focusing on **stereo SLAM integration** and **EuRoC dataset support**, which were not supported in the original version.
