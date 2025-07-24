@@ -16,10 +16,13 @@ This project enables real-time stereo visual SLAM using the GCNv2 keypoint extra
 ---
 
 ---
-
 ## 🎥 Demo (GIF Preview)
 
-![GCNv2 SLAM Demo](https://raw.githubusercontent.com/linB110/GCNv2_SLAM_stereo/main/demo/GCNv2_SLAM.gif)  ![ORB SLAM2 Demo](https://raw.githubusercontent.com/linB110/GCNv2_SLAM_stereo/main/demo/ORB_SLAM2.gif)
+**🔹 GCNv2_SLAM (Stereo SLAM with learned keypoints):**  
+![GCNv2 SLAM Demo](https://raw.githubusercontent.com/linB110/GCNv2_SLAM_stereo/main/demo/GCNv2_SLAM.gif)
+
+**🔸 ORB_SLAM2 (Baseline visual SLAM with hand-crafted features):**  
+![ORB SLAM2 Demo](https://raw.githubusercontent.com/linB110/GCNv2_SLAM_stereo/main/demo/ORB_SLAM2.gif)
 
 ---
 
